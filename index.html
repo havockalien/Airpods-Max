@@ -35,6 +35,13 @@
       padding: 0;
     }
 
+    img,
+    canvas,
+    video {
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+    }
+
     body {
       background-color: var(--bg-dark);
       color: var(--text-primary);
@@ -1561,8 +1568,8 @@
       if (!img) return;
       const hRatio = canvas.width / img.width;
       const vRatio = canvas.height / img.height;
-      // Further 10% reduction (0.782 * 0.9 = ~0.704)
-      const ratio = Math.min(hRatio, vRatio) * 0.704;
+      // Drastically reduced scale to 0.55 so the physical pixels are dense and never stretched
+      const ratio = Math.min(hRatio, vRatio) * 0.55;
 
       const isDesktop = window.innerWidth > 768;
       // Shift left on desktop so text sits beautifully on the right
@@ -1571,6 +1578,10 @@
         : (canvas.width - img.width * ratio) / 2;
 
       const centerShift_y = (canvas.height - img.height * ratio) / 2;
+
+      // Force high-quality interpolation
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, img.width, img.height,
@@ -1587,8 +1598,11 @@
 
     // Setup Canvas size
     function resizeCanvas(canvas) {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      window.dpr = Math.min(window.devicePixelRatio || 1, 3); // Allow up to 3x for maximum retina sharpness
+      canvas.width = window.innerWidth * window.dpr;
+      canvas.height = window.innerHeight * window.dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
     }
 
     // Overlay Text System
@@ -1766,18 +1780,20 @@
               ctx.stroke();
 
               ctx.fillStyle = `rgba(255,255,255,${Math.sin((p - 0.22) / 0.63 * Math.PI) * 0.5})`;
-              ctx.font = '11px -apple-system, sans-serif';
+              const dpr = window.dpr || 1;
+              ctx.font = `${11 * dpr}px -apple-system, sans-serif`;
               ctx.letterSpacing = '0.1em';
               ctx.textAlign = 'center';
               ctx.textBaseline = 'middle';
 
               // Rotation effect based on progress
               const offset = p * Math.PI;
+              const textOffset = radius + (24 * dpr);
 
-              ctx.fillText("H1 CHIP", cx + Math.cos(-Math.PI / 2 + offset) * (radius + 24), cy + Math.sin(-Math.PI / 2 + offset) * (radius + 24));
-              ctx.fillText("40MM DRIVER", cx + Math.cos(0 + offset) * (radius + 24), cy + Math.sin(0 + offset) * (radius + 24));
-              ctx.fillText("USB-C", cx + Math.cos(Math.PI / 2 + offset) * (radius + 24), cy + Math.sin(Math.PI / 2 + offset) * (radius + 24));
-              ctx.fillText("BT 5.0", cx + Math.cos(Math.PI + offset) * (radius + 24), cy + Math.sin(Math.PI + offset) * (radius + 24));
+              ctx.fillText("H1 CHIP", cx + Math.cos(-Math.PI / 2 + offset) * textOffset, cy + Math.sin(-Math.PI / 2 + offset) * textOffset);
+              ctx.fillText("40MM DRIVER", cx + Math.cos(0 + offset) * textOffset, cy + Math.sin(0 + offset) * textOffset);
+              ctx.fillText("USB-C", cx + Math.cos(Math.PI / 2 + offset) * textOffset, cy + Math.sin(Math.PI / 2 + offset) * textOffset);
+              ctx.fillText("BT 5.0", cx + Math.cos(Math.PI + offset) * textOffset, cy + Math.sin(Math.PI + offset) * textOffset);
             }
           }
         }
@@ -1812,12 +1828,14 @@
             const layout = window.seq3Layout;
             if (layout) {
               // Apply completely dynamic left/top offsets directly based on the drawn frame layout logic
+              const dpr = window.dpr || 1;
               compLabels.forEach(lbl => {
                 lbl.style.opacity = opacity;
                 const srcX = parseFloat(lbl.getAttribute('data-x')) / 100;
                 const srcY = parseFloat(lbl.getAttribute('data-y')) / 100;
-                lbl.style.left = `${layout.cx + layout.w * srcX}px`;
-                lbl.style.top = `${layout.cy + layout.h * srcY}px`;
+                // Divide the physical layout position by DevicePixelRatio to get the CSS position
+                lbl.style.left = `${(layout.cx + layout.w * srcX) / dpr}px`;
+                lbl.style.top = `${(layout.cy + layout.h * srcY) / dpr}px`;
               });
 
               const ctx = contexts[2];

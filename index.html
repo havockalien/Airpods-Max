@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>AirPods Max - Apple</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 18'%3E%3Cpath fill='white' d='M12.44,9.15c0-2.31,1.88-3.41,1.97-3.47-1.07-1.58-2.73-1.81-3.34-1.84-1.43-.14-2.78,.84-3.51,.84s-1.82-.82-2.99-.8c-1.54,.02-2.95,.95-3.75,2.39-1.63,2.83-.42,7.03,1.17,9.33,.78,1.13,1.7,2.38,2.89,2.33,1.15-.04,1.6-.74,3-1.74,1.38,0,1.8,.74,3,.71,1.24-.02,2.02-1.13,2.78-2.26,.88-1.28,1.25-2.52,1.27-2.58-.02-.01-2.45-.93-2.48-3.56M11.39,2.36c.63-.78,1.06-1.86,.94-2.95-.92,.04-2.04,.62-2.69,1.4-.53,.62-1.03,1.72-.9,2.79,1.03,.08,2.02-.45,2.65-1.23'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg-dark: #050505;
+      --bg-dark-2: #0A0A0C;
+      --bg-light: #F5F5F7;
+      --text-primary: rgba(255, 255, 255, 0.92);
+      --text-secondary: rgba(255, 255, 255, 0.56);
+      --text-dark: #1D1D1F;
+      --text-dark-sub: #6E6E73;
+      --accent-blue: #0071E3;
+      --accent-cyan: #00D6FF;
+      --border-dark: rgba(255, 255, 255, 0.08);
+      --border-light: rgba(0, 0, 0, 0.08);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      cursor: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: 'SF Pro Display', -apple-system, 'Helvetica Neue', 'Inter', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Typography Helpers */
+    .bold {
+      font-weight: 700;
+    }
+
+    .medium {
+      font-weight: 500;
+    }
+
+    .regular {
+      font-weight: 400;
+    }
+
+    .light {
+      font-weight: 300;
+    }
+
+    .muted {
+      color: var(--text-secondary);
+    }
+
+    .dark-muted {
+      color: var(--text-dark-sub);
+    }
+
+    .centered {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Loading Screen */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-dark);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.6s ease;
+    }
+
+    #loading-text {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .progress-container {
+      width: 240px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      width: 0%;
+      height: 100%;
+      background: var(--accent-blue);
+      transition: width 0.1s;
+    }
+
+    #progress-percentage {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Custom Cursor */
+    @media (hover: hover) {
+      .cursor-dot {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 6px;
+        height: 6px;
+        background: white;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 10000;
+        transform: translate(-50%, -50%);
+      }
+
+      .cursor-ring {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 32px;
+        height: 32px;
+        border: 1px solid white;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s, height 0.3s, opacity 0.3s;
+      }
+
+      .cursor-ring.hover {
+        width: 48px;
+        height: 48px;
+        opacity: 0.5;
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    /* Navbar */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 44px;
+      z-index: 1000;
+      background: rgba(5, 5, 5, 0.72);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      opacity: 0;
+      transition: opacity 1s, border-bottom 0.3s;
+    }
+
+    nav.scrolled {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-logo {
+      font-size: 17px;
+      font-weight: 500;
+      color: white;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      text-decoration: none;
+      transition: opacity 0.3s;
+    }
+
+    .nav-links a:hover {
+      opacity: 0.7;
+    }
+
+    .btn-buy {
+      background: var(--accent-blue);
+      color: white;
+      padding: 7px 16px;
+      border-radius: 980px;
+      font-size: 13px;
+      text-decoration: none;
+      transition: opacity 0.3s;
+    }
+
+    .btn-buy:hover {
+      opacity: 0.7;
+    }
+
+    /* CTAs */
+    .cta-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 36px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .cta-primary {
+      background: var(--accent-blue);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 980px;
+      font-size: 17px;
+      text-decoration: none;
+      display: inline-block;
+      transition: opacity 0.3s;
+    }
+
+    .cta-secondary {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 13px 28px;
+      border-radius: 980px;
+      font-size: 17px;
+      text-decoration: none;
+      display: inline-block;
+      transition: opacity 0.3s;
+    }
+
+    .cta-primary:hover,
+    .cta-secondary:hover {
+      opacity: 0.7;
+    }
+
+    /* Hero Section (Section 1) */
+    .hero {
+      height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .hero-content {
+      z-index: 2;
+      position: relative;
+      margin-top: -15vh;
+    }
+
+    .hero h1 {
+      font-size: 96px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+
+    .hero h2 {
+      font-size: 28px;
+      color: var(--text-dark-sub);
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 19px;
+      color: var(--text-secondary);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .hero-img-container {
+      position: absolute;
+      z-index: 1;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -10%);
+      width: 800px;
+      max-width: 100vw;
+    }
+
+    .hero-img-container::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background: radial-gradient(ellipse 70% 60% at 50% 65%, rgba(0, 113, 227, 0.18), transparent 70%);
+      z-index: -1;
+    }
+
+    .hero-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 40px 60px rgba(0, 0, 0, 0.8));
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      overflow: hidden;
+    }
+
+    .scroll-indicator::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: white;
+      animation: scrollPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes scrollPulse {
+      0% {
+        transform: translateY(-100%);
+      }
+
+      50% {
+        transform: translateY(200%);
+      }
+
+      100% {
+        transform: translateY(-100%);
+      }
+    }
+
+    /* Canvas Sections */
+    .canvas-section {
+      position: relative;
+      width: 100%;
+    }
+
+    .sticky-panel {
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow: hidden;
+      background: var(--bg-dark);
+    }
+
+    .sequence-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      transform: translate3d(0, 0, 0);
+      will-change: transform;
+      object-fit: cover;
+    }
+
+    /* Text Overlays for Canvas */
+    .overlay-text {
+      position: absolute;
+      pointer-events: none;
+      max-width: 480px;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+      will-change: transform, opacity;
+    }
+
+    .overlay-title {
+      font-size: 52px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 12px;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    .overlay-desc {
+      font-size: 17px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .overlay-title.huge {
+      font-size: 72px;
+    }
+
+    .overlay-title.large {
+      font-size: 64px;
+    }
+
+    .overlay-desc.large {
+      font-size: 19px;
+    }
+
+    /* Specifically placed overlays */
+    .text-panel-right {
+      top: 50%;
+      right: 10%;
+      transform: translateY(-50%) !important;
+      text-align: left;
+      width: 40%;
+      max-width: 480px;
+    }
+
+    .text-panel-right.active {
+      transform: translateY(-50%) !important;
+    }
+
+    .text-panel-right.exited {
+      transform: translateY(calc(-50% - 30px)) !important;
+      opacity: 0;
+    }
+
+    .text-panel-right.pre {
+      transform: translateY(calc(-50% + 30px)) !important;
+      opacity: 0;
+    }
+
+    .text-panel-center {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) !important;
+      text-align: center;
+      width: 80%;
+      max-width: 800px;
+    }
+
+    .text-panel-center.active {
+      transform: translate(-50%, -50%) !important;
+    }
+
+    .text-panel-center.exited {
+      transform: translate(-50%, calc(-50% - 30px)) !important;
+      opacity: 0;
+    }
+
+    .text-panel-center.pre {
+      transform: translate(-50%, calc(-50% + 30px)) !important;
+      opacity: 0;
+    }
+
+    /* Spec Pills focus styling */
+    .spec-pills {
+      display: flex;
+      gap: 16px;
+      margin-top: 32px;
+      opacity: 0;
+    }
+
+    .spec-pill {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 100px;
+      padding: 8px 18px;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      transform: translateX(20px);
+      opacity: 0;
+    }
+
+    /* Component Labels in Sequence 3 */
+    .comp-label {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.85);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+    }
+
+    /* Highlights Section (Dark) */
+    .highlights {
+      background: var(--bg-dark-2);
+      padding: 140px 24px;
+    }
+
+    .highlights h2 {
+      font-size: 56px;
+      color: white;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 48px 40px;
+      will-change: transform, opacity;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 24px;
+      fill: white;
+    }
+
+    .card h3 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Noise Control (Dark with Media Background) */
+    .noise-control {
+      position: relative;
+      background: #000;
+      padding: 140px 24px;
+      color: white;
+      overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+    }
+    
+    /* Noise Control Background Media */
+    .noise-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.8s ease;
+      z-index: 0;
+    }
+    
+    .noise-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%);
+      z-index: 1;
+    }
+
+    .split-layout {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      align-items: center;
+      gap: 60px;
+      width: 100%;
+    }
+
+    .split-left {
+      flex: 1;
+      max-width: 500px;
+      will-change: transform, opacity;
+    }
+
+    .split-right {
+      flex: 1;
+      display: none; /* Hide the old right side image container */
+    }
+
+    .noise-control h2 {
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+    }
+
+    .noise-control .subhead {
+      font-size: 19px;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 380px;
+      margin-bottom: 48px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 32px;
+      cursor: pointer;
+    }
+
+    .toggle-pill {
+      width: 44px;
+      height: 26px;
+      border-radius: 100px;
+      background: rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .toggle-pill.active {
+      background: var(--accent-blue);
+    }
+
+    .toggle-pill::after {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s;
+    }
+
+    .toggle-pill.active::after {
+      transform: translateX(18px);
+    }
+
+    .toggle-text h4 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .toggle-text p {
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.6);
+      max-width: 300px;
+    }
+
+    /* Comfort Section */
+    .comfort {
+      background: var(--bg-dark);
+      padding: 140px 24px;
+    }
+
+    .comfort-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .comfort-header h2 {
+      font-size: 72px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 28px;
+    }
+
+    .comfort-header p {
+      font-size: 21px;
+      color: var(--text-secondary);
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .comfort-images {
+      display: flex;
+      max-width: 1000px;
+      margin: 0 auto;
+      gap: 24px;
+    }
+
+    .comfort-img-wrap {
+      flex: 1;
+      text-align: center;
+    }
+
+    .comfort-img-wrap img {
+      width: 100%;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      object-fit: cover;
+      aspect-ratio: 4/3;
+      background: #111;
+    }
+
+    .comfort-label {
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+
+    /* 4-Up Features */
+    .features-grid {
+      background: var(--bg-dark-2);
+      padding: 120px 24px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature-cell {
+      will-change: transform, opacity;
+    }
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      fill: white;
+      opacity: 0.7;
+      margin-bottom: 20px;
+    }
+
+    .feature-cell h4 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .feature-cell p {
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.5);
+      max-width: 220px;
+      line-height: 1.4;
+    }
+
+    /* Battery Cinematic */
+    .battery {
+      background: var(--bg-dark);
+      height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 24px;
+    }
+
+    .battery-number {
+      font-size: 220px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .battery-label {
+      font-size: 40px;
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: -10px;
+      margin-bottom: 32px;
+    }
+
+    .battery-desc {
+      font-size: 17px;
+      color: rgba(255, 255, 255, 0.5);
+      max-width: 400px;
+    }
+
+    .hr-line {
+      width: 100%;
+      max-width: 400px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin: 32px 0;
+    }
+
+    .battery-small {
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      color: rgba(255, 255, 255, 0.3);
+      font-variant: small-caps;
+    }
+
+    /* Specs Section */
+    .specs {
+      background: var(--bg-light);
+      padding: 120px 24px;
+      color: var(--text-dark);
+    }
+
+    .specs h2 {
+      font-size: 48px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .spec-table {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .spec-row {
+      display: flex;
+      border-bottom: 1px solid #D2D2D7;
+      padding: 24px 0;
+      will-change: transform, opacity;
+    }
+
+    .spec-cat {
+      width: 30%;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--text-dark-sub);
+      text-transform: uppercase;
+      font-weight: 600;
+      padding-right: 24px;
+    }
+
+    .spec-vals {
+      width: 70%;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .spec-vals div {
+      margin-bottom: 8px;
+    }
+
+    .spec-vals div:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Buy CTA Section */
+    .buy-cta {
+      background: var(--bg-dark);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .buy-img-container {
+      position: relative;
+      margin-bottom: 48px;
+    }
+
+    .buy-img-container::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120%;
+      height: 120%;
+      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0, 113, 227, 0.2), transparent 65%);
+      z-index: -1;
+    }
+
+    .buy-img {
+      width: 300px;
+      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
+    }
+
+    .buy-cta h2 {
+      font-size: 80px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .buy-price {
+      font-size: 28px;
+      color: var(--text-dark-sub);
+      margin-top: 8px;
+    }
+
+    .swatches {
+      display: flex;
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    .swatch {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      position: relative;
+      transition: transform 0.2s;
+    }
+
+    .swatch:hover {
+      transform: scale(1.2);
+    }
+
+    .swatch.active {
+      box-shadow: 0 0 0 2px var(--bg-dark), 0 0 0 3px white;
+    }
+
+    /* Footer */
+    footer {
+      background: #1D1D1F;
+      padding: 60px 24px 40px;
+      font-size: 12px;
+      color: var(--text-dark-sub);
+    }
+
+    .footer-content {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      margin-bottom: 20px;
+    }
+
+    .footer-hr {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 20px 0;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .footer-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-col strong {
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .footer-col a {
+      color: var(--text-dark-sub);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* GSAP Reveal Classes */
+    .reveal-up {
+      opacity: 0;
+      transform: translateY(44px);
+    }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(60px);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      nav {
+        padding: 0 16px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 64px;
+      }
+
+      .hero h2 {
+        font-size: 22px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .overlay-title {
+        font-size: 34px !important;
+      }
+
+      .overlay-desc {
+        font-size: 15px !important;
+      }
+
+      .text-panel-right {
+        top: auto !important;
+        bottom: 10% !important;
+        right: 5% !important;
+        left: 5% !important;
+        width: 90% !important;
+        text-align: center !important;
+        transform: translateY(0) !important;
+      }
+
+      .text-panel-right.pre {
+        transform: translateY(24px) !important;
+      }
+
+      .text-panel-right.exited {
+        transform: translateY(-24px) !important;
+      }
+
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+      }
+
+      .split-layout {
+        flex-direction: column;
+      }
+
+      .comfort-images {
+        flex-direction: column;
+      }
+
+      .noise-gradient {
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0) 100%);
+      }
+      
+      .noise-control {
+        align-items: flex-end;
+        padding-bottom: 80px;
+      }
+
+      .comfort-header h2 {
+        font-size: 48px;
+      }
+
+      .battery-number {
+        font-size: 140px;
+      }
+
+      .battery-label {
+        font-size: 28px;
+      }
+
+      .specs h2 {
+        font-size: 36px;
+      }
+
+      .spec-row {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .spec-cat {
+        width: 100%;
+      }
+
+      .spec-vals {
+        width: 100%;
+      }
+
+      .buy-cta h2 {
+        font-size: 56px;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 32px;
+      }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.3/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.3/ScrollTrigger.min.js"></script>
+</head>
+
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div id="loading-text">AirPods Max</div>
+    <div class="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+    <div id="progress-percentage" class="tabular-nums">0%</div>
+  </div>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+
+  <!-- Navbar -->
+  <nav>
+    <a href="#" class="nav-logo" style="display: flex; align-items: center; gap: 6px;">
+      <svg width="15" height="18" viewBox="0 0 14 18" fill="white">
+        <path d="M12.44,9.15c0-2.31,1.88-3.41,1.97-3.47-1.07-1.58-2.73-1.81-3.34-1.84-1.43-.14-2.78,.84-3.51,.84s-1.82-.82-2.99-.8c-1.54,.02-2.95,.95-3.75,2.39-1.63,2.83-.42,7.03,1.17,9.33,.78,1.13,1.7,2.38,2.89,2.33,1.15-.04,1.6-.74,3-1.74,1.38,0,1.8,.74,3,.71,1.24-.02,2.02-1.13,2.78-2.26,.88-1.28,1.25-2.52,1.27-2.58-.02-.01-2.45-.93-2.48-3.56M11.39,2.36c.63-.78,1.06-1.86,.94-2.95-.92,.04-2.04,.62-2.69,1.4-.53,.62-1.03,1.72-.9,2.79,1.03,.08,2.02-.45,2.65-1.23"/>
+      </svg>
+      AirPods Max
+    </a>
+    <div class="nav-links">
+      <a href="#overview">Overview</a>
+      <a href="#highlights">Highlights</a>
+      <a href="#audio">Audio</a>
+      <a href="#noise-control">Noise Control</a>
+      <a href="#specs">Specs</a>
+      <a href="#buy">Buy</a>
+    </div>
+    <a href="#buy" class="btn-buy">Buy AirPods Max</a>
+  </nav>
+
+  <!-- SECTION 1: HERO -->
+  <section class="hero" id="overview">
+    <div class="hero-content">
+      <h1>AirPods Max</h1>
+      <h2>Symphonic boom.</h2>
+      <p>The ultimate over-ear personal listening experience.</p>
+      <div class="cta-group">
+        <a href="#buy" class="cta-primary">Buy AirPods Max</a>
+        <a href="#highlights" class="cta-secondary">Learn more</a>
+      </div>
+    </div>
+    <div class="hero-img-container">
+      <img src="frames/AirmaxImage.png" alt="AirPods Max" class="hero-img" style="transform: scale(1.08); opacity: 0;">
+    </div>
+    <div class="scroll-indicator"></div>
+  </section>
+
+  <!-- SECTION 2: SEQUENCE 1 (Hero Split Frames) -->
+  <section id="section-seq1" class="canvas-section" style="height: 300vh;">
+    <div class="sticky-panel">
+      <canvas id="canvas-seq1" class="sequence-canvas"></canvas>
+
+      <!-- Text Overlays -->
+      <div id="seq1-text1" class="overlay-text text-panel-right">
+        <h3 class="overlay-title">All the vivid details.</h3>
+        <p class="overlay-desc">Custom-built dynamic driver. Ultra-low distortion across the entire audible range.</p>
+      </div>
+      <div id="seq1-text2" class="overlay-text text-panel-right">
+        <h3 class="overlay-title">Precision-engineered.</h3>
+        <p class="overlay-desc">Every component optimized for audio perfection. Forged aluminum ear cups. Knit-mesh
+          canopy.</p>
+      </div>
+      <div id="seq1-text3" class="overlay-text text-panel-right">
+        <h3 class="overlay-title huge">Up to 20 hours.</h3>
+        <p class="overlay-desc large">Listening time with ANC and Spatial Audio enabled.</p>
+        <!-- Spec Pills -->
+        <div id="seq1-pills" class="spec-pills">
+          <div class="spec-pill">Apple H1 Chip</div>
+          <div class="spec-pill">9 Microphones</div>
+          <div class="spec-pill">40mm Driver</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: SEQUENCE 2 (Side Profile Rotation) -->
+  <section id="section-seq2" class="canvas-section" style="height: 400vh;">
+    <div class="sticky-panel">
+      <canvas id="canvas-seq2" class="sequence-canvas"></canvas>
+
+      <!-- Text Overlays -->
+      <div id="seq2-text1" class="overlay-text text-panel-right">
+        <h3 class="overlay-title large">Hear every detail.</h3>
+        <p class="overlay-desc">Apple-designed 40mm dynamic drivers deliver ultra-low distortion across the entire
+          audible range.</p>
+      </div>
+      <div id="seq2-text2" class="overlay-text text-panel-right">
+        <h3 class="overlay-title">Precision from every angle.</h3>
+        <p class="overlay-desc">Forged aluminum ear cups. Machined to within microns of perfection.</p>
+      </div>
+      <div id="seq2-text3" class="overlay-text text-panel-right">
+        <h3 class="overlay-title">Built to last.</h3>
+        <p class="overlay-desc">Premium materials. Uncompromising build quality. Designed to endure.</p>
+      </div>
+      <div id="seq2-text4" class="overlay-text text-panel-right">
+        <h3 class="overlay-title large">Nine microphones.</h3>
+        <p class="overlay-desc">Eight for Active Noise Cancellation. Three for crystal-clear voice pickup.</p>
+      </div>
+      <div id="seq2-text5" class="overlay-text text-panel-center">
+        <h3 class="overlay-title huge">AirPods Max</h3>
+        <p class="overlay-desc large dark-muted">From $549</p>
+        <a href="#buy" class="cta-primary" style="margin-top: 24px;">Buy AirPods Max</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: SEQUENCE 3 (Speaker Explosion) -->
+  <section id="section-seq3" class="canvas-section" style="height: 500vh;">
+    <div class="sticky-panel">
+      <canvas id="canvas-seq3" class="sequence-canvas"></canvas>
+
+      <!-- Component Labels (data-x and data-y are original image percentage centers) -->
+      <div class="comp-label" data-x="50" data-y="50">40MM DYNAMIC DRIVER</div>
+      <div class="comp-label" data-x="50" data-y="65">NEODYMIUM MAGNET</div>
+      <div class="comp-label" data-x="35" data-y="30">APPLE H1 CHIP</div>
+      <div class="comp-label" data-x="50" data-y="20">MESH CANOPY</div>
+      <div class="comp-label" data-x="25" data-y="50">MEMORY FOAM</div>
+      <div class="comp-label" data-x="75" data-y="50">OPTICAL SENSOR</div>
+      <div class="comp-label" data-x="75" data-y="60">9 MICROPHONES</div>
+      <div class="comp-label" data-x="70" data-y="75">USB-C PORT</div>
+
+      <!-- Text Overlays -->
+      <div id="seq3-text1" class="overlay-text text-panel-right">
+        <h3 class="overlay-title large">Engineered for sound.</h3>
+        <p class="overlay-desc">Every component obsessively refined.</p>
+      </div>
+      <div id="seq3-text2" class="overlay-text text-panel-right">
+        <h3 class="overlay-title">Memory foam cushions.</h3>
+        <p class="overlay-desc">Conform perfectly to every head shape. Infinite comfort, infinite hours.</p>
+      </div>
+      <div id="seq3-text3" class="overlay-text text-panel-right">
+        <h3 class="overlay-title">Pro-level Active Noise Cancellation.</h3>
+        <p class="overlay-desc">Eight microphones detect and cancel external noise in real time.</p>
+      </div>
+      <div id="seq3-text4" class="overlay-text text-panel-right">
+        <h3 class="overlay-title">Apple H1 Chip.</h3>
+        <p class="overlay-desc">Computational audio. 10 audio cores. Real-time processing.</p>
+      </div>
+      <div id="seq3-text5" class="overlay-text text-panel-right">
+        <h3 class="overlay-title">Adaptive EQ.</h3>
+        <p class="overlay-desc">Tunes music to the shape of your ear in real time. Always perfect sound.</p>
+      </div>
+      <div id="seq3-text6" class="overlay-text text-panel-center">
+        <h3 class="overlay-title huge">Hear everything.</h3>
+        <h3 class="overlay-title huge muted">Nothing else.</h3>
+        <a href="#buy" class="cta-primary" style="margin-top: 32px;">Buy</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: HIGHLIGHTS (Dark) -->
+  <section class="highlights" id="highlights">
+    <h2>Get the highlights.</h2>
+    <div class="grid-3">
+      <div class="card reveal-up">
+        <svg class="card-icon" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z" />
+        </svg>
+        <h3>Personalised Spatial Audio</h3>
+        <p>Dynamic head tracking places sound exactly where it should be â€” surrounding you completely.</p>
+      </div>
+      <div class="card reveal-up">
+        <svg class="card-icon" viewBox="0 0 24 24">
+          <path d="M4 10h4v10H4zM10 4h4v16h-4zM16 12h4v8h-4z" />
+        </svg>
+        <h3>Adaptive EQ</h3>
+        <p>Automatically tunes music to the shape of your ear in real time for consistently perfect sound.</p>
+      </div>
+      <div class="card reveal-up">
+        <svg class="card-icon" viewBox="0 0 24 24">
+          <path
+            d="M21 3H3C1.9 3 1 3.9 1 5v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM8 15v-4H6v4H4V9h2v4h2V9h2v6H8zm12-2h-3v-2h3v-2h-3V7h-2v10h5v-4z" />
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: NOISE CONTROL -->
+  <section class="noise-control" id="noise-control">
+    <!-- Background Media -->
+    <img src="frames/A_single_perfect_water_droplet_suspended_midfall.png" alt="Pure Silence - Water Drop" id="noise-img" class="noise-bg" style="opacity: 1;">
+    <video id="transparency-vid" class="noise-bg" style="opacity: 0;" loop playsinline src="frames/Manhattan_traffic_at_golden_hour.mp4"></video>
+    <div class="noise-gradient"></div>
+
+    <div class="split-layout">
+      <div class="split-left reveal-left">
+        <h2>Silence the world.<br>Or let it in.</h2>
+        <p class="subhead">Industry-leading Active Noise Cancellation counters external sound with equal anti-noise,
+          allowing you to immerse yourself in what you're listening to.</p>
+
+        <div class="toggle-row">
+          <div class="toggle-pill active"></div>
+          <div class="toggle-text">
+            <h4>Active Noise Cancellation</h4>
+            <p>Removes up to 97% of ambient noise so you can focus completely on your audio.</p>
+          </div>
+        </div>
+
+        <div class="toggle-row" style="opacity: 0.5;">
+          <div class="toggle-pill"></div>
+          <div class="toggle-text">
+            <h4>Transparency Mode</h4>
+            <p>Lets the outside world in so you stay aware of your surroundings without removing your AirPods.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 7: COMFORT (Dark) -->
+  <section class="comfort" id="audio">
+    <div class="comfort-header reveal-up">
+      <h2>From cushion to canopy.</h2>
+      <p>AirPods Max are designed for an uncompromising fit with unequalled comfort even after hours of wear.</p>
+    </div>
+    <div class="comfort-images">
+      <div class="comfort-img-wrap reveal-up">
+        <!-- Re-using sequence3 frames for closeup -->
+        <img src="frames/KnitMeshCanopy_bg_removed.png" alt="Knit-Mesh Canopy">
+        <div class="comfort-label">Knit-Mesh Canopy</div>
+      </div>
+      <div class="comfort-img-wrap reveal-up" style="transition-delay: 0.1s;">
+        <img src="frames/MemoryCushionAirMax.jpg" alt="Memory Foam Cushions">
+        <div class="comfort-label">Memory Foam Cushions</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 8: 4-UP FEATURES GRID -->
+  <section class="features-grid">
+    <div class="grid-4">
+      <div class="feature-cell reveal-up">
+        <svg class="feature-icon" viewBox="0 0 24 24">
+          <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z" />
+        </svg>
+        <h4>Automatic Switching</h4>
+        <p>Seamlessly moves between your iPhone, iPad, and Mac.</p>
+      </div>
+      <div class="feature-cell reveal-up">
+        <svg class="feature-icon" viewBox="0 0 24 24">
+          <path d="M19 14v4h-4v-4h4zM19 6v4h-4V6h4zM11 14v4H7v-4h4zM11 6v4H7V6h4z" />
+        </svg>
+        <h4>Audio Sharing</h4>
+        <p>Share your audio with a friend who also has AirPods.</p>
+      </div>
+      <div class="feature-cell reveal-up">
+        <svg class="feature-icon" viewBox="0 0 24 24">
+          <path
+            d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+        </svg>
+        <h4>Always-on Siri</h4>
+        <p>Just say "Hey Siri" hands-free, every time.</p>
+      </div>
+      <div class="feature-cell reveal-up">
+        <svg class="feature-icon" viewBox="0 0 24 24">
+          <path d="M16.14 13L16 11l-2-2h-4L8 11l-.14 2H6v2h12v-2h-1.86zM4 17h16v2H4z" />
+        </svg>
+        <h4>USB-C Charging</h4>
+        <p>5 minutes of charge gives you 1.5 hours of listening.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 9: BATTERY -->
+  <section class="battery">
+    <div class="battery-number reveal-up">0</div>
+    <div class="battery-label reveal-up">hours</div>
+    <div class="battery-desc reveal-up">Listening time with Active Noise Cancellation and Spatial Audio enabled.</div>
+    <div class="hr-line reveal-up"></div>
+    <div class="battery-small reveal-up">5 MIN CHARGE &nbsp; &nbsp; 1.5 HRS LISTENING</div>
+  </section>
+
+  <!-- SECTION 10: SPECS -->
+  <section class="specs" id="specs">
+    <h2 class="reveal-up">Tech Specs</h2>
+    <div class="spec-table">
+      <div class="spec-row reveal-up">
+        <div class="spec-cat">Audio Technology</div>
+        <div class="spec-vals">
+          <div>Apple-designed 40mm dynamic driver</div>
+          <div>Active Noise Cancellation</div>
+          <div>Transparency mode</div>
+          <div>Adaptive EQ</div>
+          <div>Personalised Spatial Audio with dynamic head tracking</div>
+          <div>Lossless Audio via USB-C (up to 24-bit/48kHz)</div>
+        </div>
+      </div>
+      <div class="spec-row reveal-up">
+        <div class="spec-cat">Chip</div>
+        <div class="spec-vals">
+          <div>Apple H1 headphone chip (one in each ear cup)</div>
+        </div>
+      </div>
+      <div class="spec-row reveal-up">
+        <div class="spec-cat">Microphones</div>
+        <div class="spec-vals">
+          <div>9 microphones total</div>
+          <div>8 for Active Noise Cancellation</div>
+          <div>3 for voice pickup</div>
+        </div>
+      </div>
+      <div class="spec-row reveal-up">
+        <div class="spec-cat">Sensors</div>
+        <div class="spec-vals">
+          <div>Optical sensors · Position sensors</div>
+          <div>Case detect sensors · Accelerometers · Gyroscope</div>
+        </div>
+      </div>
+      <div class="spec-row reveal-up">
+        <div class="spec-cat">Battery Life</div>
+        <div class="spec-vals">
+          <div>Up to 20 hours with ANC + Spatial Audio</div>
+          <div>Up to 20 hours with Transparency mode</div>
+          <div>5-minute charge 1.5 hours playback</div>
+        </div>
+      </div>
+      <div class="spec-row reveal-up">
+        <div class="spec-cat">In The Box</div>
+        <div class="spec-vals">
+          <div>AirPods Max</div>
+          <div>USB-C to USB-C Cable (1m)</div>
+          <div>Smart Case</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 11: BUY CTA -->
+  <section class="buy-cta" id="buy">
+    <div class="buy-img-container reveal-up">
+      <img src="frames/AirmaxImage.png" alt="AirPods Max" class="buy-img">
+    </div>
+    <h2 class="reveal-up">AirPods Max</h2>
+    <div class="buy-price reveal-up">From $549</div>
+    <div class="swatches reveal-up">
+      <div class="swatch active" style="background: #2D2A26;"></div>
+      <div class="swatch" style="background: #E8E3DA;"></div>
+      <div class="swatch" style="background: #B5B5B7;"></div>
+      <div class="swatch" style="background: #F2C8C4;"></div>
+      <div class="swatch" style="background: #1B3A5C;"></div>
+    </div>
+    <div class="cta-group reveal-up" style="margin-top: 40px;">
+      <a href="#" class="cta-primary">Buy AirPods Max</a>
+      <a href="#" class="cta-secondary">Find A Store</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-top">Copyright © 2025 Apple Inc. All rights reserved.</div>
+      <div class="footer-hr"></div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <strong>Shop</strong>
+          <a href="#">AirPods Max</a>
+          <a href="#">Compare Models</a>
+          <a href="#">Accessories</a>
+        </div>
+        <div class="footer-col">
+          <strong>Support</strong>
+          <a href="#">AppleCare+</a>
+          <a href="#">User Guide</a>
+          <a href="#">Community</a>
+        </div>
+        <div class="footer-col">
+          <strong>Legal</strong>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+          <a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // GSAP & ScrollTrigger Setup
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.normalizeScroll(true);
+    ScrollTrigger.config({ limitCallbacks: true });
+
+    // Cursor Logic
+    const isHoverEnabled = window.matchMedia('(hover: hover)').matches;
+    if (isHoverEnabled) {
+      const dot = document.querySelector('.cursor-dot');
+      const ring = document.querySelector('.cursor-ring');
+      const cursor = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+      const ringPos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
+      document.addEventListener('mousemove', e => {
+        cursor.x = e.clientX;
+        cursor.y = e.clientY;
+        dot.style.top = `${cursor.y}px`;
+        dot.style.left = `${cursor.x}px`;
+      });
+
+      const updateRing = () => {
+        ringPos.x += (cursor.x - ringPos.x) * 0.12;
+        ringPos.y += (cursor.y - ringPos.y) * 0.12;
+        ring.style.top = `${ringPos.y}px`;
+        ring.style.left = `${ringPos.x}px`;
+        requestAnimationFrame(updateRing);
+      };
+      requestAnimationFrame(updateRing);
+
+      document.querySelectorAll('a, button, .swatch, .toggle-row').forEach(el => {
+        el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+        el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+      });
+    }
+
+    // Preloading Sequences
+    const sequences = {
+      seq1: { path: './frames/sequence1', count: 240, frames: [] },
+      seq2: { path: './frames/sequence2', count: 240, frames: [] },
+      seq3: { path: './frames/sequence3', count: 240, frames: [] }
+    };
+
+    let loadedCount = 0;
+    const totalFrames = sequences.seq1.count + sequences.seq2.count + sequences.seq3.count;
+
+    async function preloadSequence(seqKey) {
+      const seq = sequences[seqKey];
+      const promises = Array.from({ length: seq.count }, (_, i) => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            seq.frames[i] = img;
+            loadedCount++;
+            const progress = Math.floor((loadedCount / totalFrames) * 100);
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-percentage').textContent = `${progress}%`;
+            resolve();
+          };
+          img.onerror = resolve; // Continue on error
+          img.src = `${seq.path}/frame_${String(i + 1).padStart(3, '0')}.jpg`;
+        });
+      });
+      await Promise.all(promises);
+    }
+
+    // Draw Frame helper
+    function drawFrame(ctx, canvas, img) {
+      if (!img) return;
+      const hRatio = canvas.width / img.width;
+      const vRatio = canvas.height / img.height;
+      // Further 10% reduction (0.782 * 0.9 = ~0.704)
+      const ratio = Math.min(hRatio, vRatio) * 0.704;
+
+      const isDesktop = window.innerWidth > 768;
+      // Shift left on desktop so text sits beautifully on the right
+      const centerShift_x = isDesktop
+        ? (canvas.width - img.width * ratio) * 0.15
+        : (canvas.width - img.width * ratio) / 2;
+
+      const centerShift_y = (canvas.height - img.height * ratio) / 2;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, img.width, img.height,
+        centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
+
+      // Save responsive layout info for global usage by overlays/lines
+      if (canvas.id === 'canvas-seq2') {
+        window.seq2Layout = { cx: centerShift_x, cy: centerShift_y, w: img.width * ratio, h: img.height * ratio };
+      }
+      if (canvas.id === 'canvas-seq3') {
+        window.seq3Layout = { cx: centerShift_x, cy: centerShift_y, w: img.width * ratio, h: img.height * ratio };
+      }
+    }
+
+    // Setup Canvas size
+    function resizeCanvas(canvas) {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    // Overlay Text System
+    function updateOverlays(progress, overlays) {
+      overlays.forEach(overlay => {
+        const isMobile = window.innerWidth <= 768;
+        // On mobile, text is shown longer or simpler, but we'll use same logic for now
+        const inRange = progress >= overlay.start && progress <= overlay.end;
+
+        if (inRange) {
+          overlay.el.style.opacity = '1';
+          overlay.el.classList.add('active');
+          overlay.el.classList.remove('pre', 'exited');
+        } else {
+          overlay.el.style.opacity = '0';
+          overlay.el.classList.remove('active');
+          if (progress < overlay.start) {
+            overlay.el.classList.add('pre');
+            overlay.el.classList.remove('exited');
+          } else {
+            overlay.el.classList.add('exited');
+            overlay.el.classList.remove('pre');
+          }
+        }
+      });
+    }
+
+    async function init() {
+      await Promise.all([
+        preloadSequence('seq1'),
+        preloadSequence('seq2'),
+        preloadSequence('seq3')
+      ]);
+
+      // Hide loading screen
+      const loadingScreen = document.getElementById('loading-screen');
+      loadingScreen.style.opacity = '0';
+      setTimeout(() => { loadingScreen.style.display = 'none'; }, 600);
+
+      // Initialize Canvas Contexts
+      const canvases = [
+        document.getElementById('canvas-seq1'),
+        document.getElementById('canvas-seq2'),
+        document.getElementById('canvas-seq3')
+      ];
+      const contexts = canvases.map(c => c.getContext('2d'));
+
+      canvases.forEach(resizeCanvas);
+      window.addEventListener('resize', () => {
+        canvases.forEach(resizeCanvas);
+        drawFrame(contexts[0], canvases[0], sequences.seq1.frames[0]);
+        drawFrame(contexts[1], canvases[1], sequences.seq2.frames[0]);
+        drawFrame(contexts[2], canvases[2], sequences.seq3.frames[0]);
+      });
+
+      // Initial draw
+      drawFrame(contexts[0], canvases[0], sequences.seq1.frames[0]);
+      drawFrame(contexts[1], canvases[1], sequences.seq2.frames[0]);
+      drawFrame(contexts[2], canvases[2], sequences.seq3.frames[0]);
+
+      // Page Load Sequence
+      const nav = document.querySelector('nav');
+      setTimeout(() => { nav.style.opacity = '1'; }, 0);
+
+      gsap.to('.hero-img', { scale: 1, filter: 'drop-shadow(0 40px 60px rgba(0,0,0,0.8)) blur(0px)', opacity: 1, duration: 1.4, ease: "power3.out", delay: 0.2 });
+      gsap.fromTo('.hero h1', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, delay: 0.5 });
+      gsap.fromTo('.hero h2', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, delay: 0.65 });
+      gsap.fromTo('.hero p', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, delay: 0.8 });
+      gsap.fromTo('.cta-group', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, delay: 0.95 });
+
+      // Hero Parallax & Nav Scrolled state
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        if (scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+
+        const heroImg = document.querySelector('.hero-img-container');
+        if (scrollY < window.innerHeight) {
+          heroImg.style.transform = `translate(-50%, calc(-10% + ${scrollY * 0.35}px))`;
+        }
+      });
+
+      // Noise Control Toggles Functional Logic
+      const toggleRows = document.querySelectorAll('.toggle-row');
+      const noiseImg = document.getElementById('noise-img');
+      const transVid = document.getElementById('transparency-vid');
+
+      toggleRows.forEach((row, index) => {
+        row.addEventListener('click', () => {
+          if (row.querySelector('.toggle-pill').classList.contains('active')) return;
+          toggleRows.forEach(r => {
+            r.querySelector('.toggle-pill').classList.remove('active');
+            r.style.opacity = '0.5';
+          });
+          row.querySelector('.toggle-pill').classList.add('active');
+          row.style.opacity = '1';
+
+          // Index 0 = ANC (Image), Index 1 = Transparency (Video)
+          if (index === 0) {
+            noiseImg.style.opacity = '1';
+            transVid.style.opacity = '0';
+            transVid.pause();
+          } else {
+            noiseImg.style.opacity = '0';
+            transVid.style.opacity = '1';
+            transVid.play().catch(e => console.log("Video auto-play blocked until volume interaction", e));
+          }
+        });
+      });
+
+      // Sequence 1 Overlays
+      const overlaysSeq1 = [
+        { el: document.getElementById('seq1-text1'), start: 0, end: 0.28 },
+        { el: document.getElementById('seq1-text2'), start: 0.32, end: 0.62 },
+        { el: document.getElementById('seq1-text3'), start: 0.66, end: 0.95 }
+      ];
+      const specPills = document.getElementById('seq1-pills');
+      const pillItems = document.querySelectorAll('.spec-pill');
+
+      ScrollTrigger.create({
+        trigger: "#section-seq1",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.5,
+        onUpdate: (self) => {
+          const p = self.progress;
+          const frameIndex = Math.round(p * 239);
+          drawFrame(contexts[0], canvases[0], sequences.seq1.frames[frameIndex]);
+          updateOverlays(p, overlaysSeq1);
+
+          // Pills 66-95% aligned with the final description panel
+          if (p >= 0.66 && p <= 0.95 && window.innerWidth > 768) {
+            specPills.style.opacity = '1';
+            gsap.to(pillItems, { x: 0, opacity: 1, stagger: 0.15, duration: 0.4, overwrite: "auto" });
+          } else {
+            specPills.style.opacity = '0';
+            gsap.to(pillItems, { x: 20, opacity: 0, duration: 0.2, overwrite: "auto" });
+          }
+        }
+      });
+
+      // Sequence 2 Overlays
+      const overlaysSeq2 = [
+        { el: document.getElementById('seq2-text1'), start: 0, end: 0.20 },
+        { el: document.getElementById('seq2-text2'), start: 0.22, end: 0.44 },
+        { el: document.getElementById('seq2-text3'), start: 0.46, end: 0.66 },
+        { el: document.getElementById('seq2-text4'), start: 0.68, end: 0.85 },
+        { el: document.getElementById('seq2-text5'), start: 0.87, end: 1.0 }
+      ];
+
+      ScrollTrigger.create({
+        trigger: "#section-seq2",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.5,
+        onUpdate: (self) => {
+          const p = self.progress;
+          const frameIndex = Math.round(p * 239);
+          drawFrame(contexts[1], canvases[1], sequences.seq2.frames[frameIndex]);
+          updateOverlays(p, overlaysSeq2);
+
+          // Rotating Spec Ring
+          if (p >= 0.22 && p <= 0.85 && window.innerWidth > 768) {
+            const ctx = contexts[1];
+            const layout = window.seq2Layout;
+            if (layout) {
+              const cx = layout.cx + layout.w / 2;
+              const cy = layout.cy + layout.h / 2;
+              const radius = Math.min(layout.w, layout.h) * 0.35;
+
+              ctx.beginPath();
+              ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+              ctx.strokeStyle = `rgba(255,255,255,${Math.sin((p - 0.22) / 0.63 * Math.PI) * 0.15})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
+
+              ctx.fillStyle = `rgba(255,255,255,${Math.sin((p - 0.22) / 0.63 * Math.PI) * 0.5})`;
+              ctx.font = '11px -apple-system, sans-serif';
+              ctx.letterSpacing = '0.1em';
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+
+              // Rotation effect based on progress
+              const offset = p * Math.PI;
+
+              ctx.fillText("H1 CHIP", cx + Math.cos(-Math.PI / 2 + offset) * (radius + 24), cy + Math.sin(-Math.PI / 2 + offset) * (radius + 24));
+              ctx.fillText("40MM DRIVER", cx + Math.cos(0 + offset) * (radius + 24), cy + Math.sin(0 + offset) * (radius + 24));
+              ctx.fillText("USB-C", cx + Math.cos(Math.PI / 2 + offset) * (radius + 24), cy + Math.sin(Math.PI / 2 + offset) * (radius + 24));
+              ctx.fillText("BT 5.0", cx + Math.cos(Math.PI + offset) * (radius + 24), cy + Math.sin(Math.PI + offset) * (radius + 24));
+            }
+          }
+        }
+      });
+
+      // Sequence 3 Overlays
+      const overlaysSeq3 = [
+        { el: document.getElementById('seq3-text1'), start: 0, end: 0.14 },
+        { el: document.getElementById('seq3-text2'), start: 0.16, end: 0.34 },
+        { el: document.getElementById('seq3-text3'), start: 0.36, end: 0.54 },
+        { el: document.getElementById('seq3-text4'), start: 0.56, end: 0.72 },
+        { el: document.getElementById('seq3-text5'), start: 0.74, end: 0.84 },
+        { el: document.getElementById('seq3-text6'), start: 0.86, end: 1.0 }
+      ];
+      const compLabels = document.querySelectorAll('.comp-label');
+
+      ScrollTrigger.create({
+        trigger: "#section-seq3",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.5,
+        onUpdate: (self) => {
+          const p = self.progress;
+          const frameIndex = Math.round(p * 239);
+          drawFrame(contexts[2], canvases[2], sequences.seq3.frames[frameIndex]);
+          updateOverlays(p, overlaysSeq3);
+
+          // Component Labels 40-85% (Frames ~97-204)
+          if (p >= 0.40 && p <= 0.85 && window.innerWidth > 768) {
+            const opacity = Math.sin((p - 0.40) / 0.45 * Math.PI);
+
+            const layout = window.seq3Layout;
+            if (layout) {
+              // Apply completely dynamic left/top offsets directly based on the drawn frame layout logic
+              compLabels.forEach(lbl => {
+                lbl.style.opacity = opacity;
+                const srcX = parseFloat(lbl.getAttribute('data-x')) / 100;
+                const srcY = parseFloat(lbl.getAttribute('data-y')) / 100;
+                lbl.style.left = `${layout.cx + layout.w * srcX}px`;
+                lbl.style.top = `${layout.cy + layout.h * srcY}px`;
+              });
+
+              const ctx = contexts[2];
+              ctx.strokeStyle = `rgba(255,255,255,${opacity * 0.2})`;
+              ctx.lineWidth = 0.5;
+
+              const cx = layout.cx + layout.w / 2;
+              const cy = layout.cy + layout.h / 2;
+
+              // Draw connection lines natively tracking the image boundaries
+              compLabels.forEach(lbl => {
+                const srcX = parseFloat(lbl.getAttribute('data-x')) / 100;
+                const srcY = parseFloat(lbl.getAttribute('data-y')) / 100;
+                const lx = layout.cx + layout.w * srcX;
+                const ly = layout.cy + layout.h * srcY;
+
+                ctx.beginPath();
+                ctx.moveTo(lx, ly);
+                // Draw a short trailing line inward to the visual component center
+                ctx.lineTo(lx + (cx - lx) * 0.25, ly + (cy - ly) * 0.25);
+                ctx.stroke();
+              });
+            }
+          } else {
+            compLabels.forEach(lbl => lbl.style.opacity = 0);
+          }
+        }
+      });
+
+      // Scroll Reveals for normal sections
+      const revealElements = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
+      revealElements.forEach(el => {
+        let animProps = { y: 0, x: 0, opacity: 1, duration: 0.9, ease: "power3.out" };
+        if (el.classList.contains('reveal-up')) {
+          gsap.fromTo(el, { y: 44, opacity: 0 }, { ...animProps, scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" } });
+        } else if (el.classList.contains('reveal-left')) {
+          gsap.fromTo(el, { x: -60, opacity: 0 }, { ...animProps, scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" } });
+        } else if (el.classList.contains('reveal-right')) {
+          gsap.fromTo(el, { x: 60, opacity: 0 }, { ...animProps, scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" } });
+        }
+      });
+
+      // Sequence stagger for Spec Rows and Cards
+      ScrollTrigger.create({
+        trigger: ".grid-3",
+        start: "top 85%",
+        onEnter: () => gsap.to(".card", { y: 0, opacity: 1, stagger: 0.12, duration: 0.8, ease: "power3.out" })
+      });
+      gsap.set(".card", { y: 40, opacity: 0 });
+
+      ScrollTrigger.create({
+        trigger: ".spec-table",
+        start: "top 85%",
+        onEnter: () => gsap.to(".spec-row", { y: 0, opacity: 1, stagger: 0.06, duration: 0.6, ease: "power3.out" })
+      });
+      gsap.set(".spec-row", { y: 20, opacity: 0 });
+
+      // Highligts features cell
+      ScrollTrigger.create({
+        trigger: ".grid-4",
+        start: "top 85%",
+        onEnter: () => gsap.to(".feature-cell", { y: 0, opacity: 1, stagger: 0.1, duration: 0.6, ease: "power3.out" })
+      });
+      gsap.set(".feature-cell", { y: 30, opacity: 0 });
+
+      // Battery Counter
+      ScrollTrigger.create({
+        trigger: ".battery",
+        start: "top 70%",
+        onEnter: () => {
+          const obj = { val: 0 };
+          gsap.to(obj, {
+            val: 20, duration: 2, ease: "power2.out",
+            onUpdate: () => { document.querySelector('.battery-number').textContent = Math.round(obj.val); }
+          });
+        },
+        once: true
+      });
+    }
+
+    // Start loading
+    window.addEventListener('load', init);
+
+  </script>
+</body>
+
+</html>
